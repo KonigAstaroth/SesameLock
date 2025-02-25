@@ -1,14 +1,18 @@
 
 {% extends "template.html"%}
-
+{% load static %}
 
 {% block titulo%}
+    Signup
+{% endblock %}
 
+{% block links %}
+    <link rel="stylesheet" href="{% static 'css/signup.css'%}">
 {% endblock %}
 
 {% block contenido %}
 
-<h1 class="saludo">Hola</h1>
+<h1 class="saludo1">Hola</h1>
 <form class="fromu_signup">
 
 </form>
