@@ -171,4 +171,4 @@ cython_debug/
 .pypirc
 
 #FIREBASE
-.proyectosesamelock-firebase-adminsdk-fbsvc-588ce4654a.json
+*.json
