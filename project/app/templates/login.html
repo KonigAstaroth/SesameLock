@@ -1,0 +1,34 @@
+
+{% extends "templateForms.html"%}
+{% load static %}
+
+{% block titulo%}
+    Login
+{% endblock %}
+
+{% block links %}
+    <link rel="stylesheet" href="{% static 'css/form.css'%}">
+{% endblock %}
+
+{% block contenido %}
+<div class="form-container">
+    <h1>Iniciar Sesión</h1>
+    <form id="loginForm" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" name="username" placeholder="Ingresa tu usuario">
+        <span class="error-message" id="usernameError"></span>
+    </div>
+    <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña">
+        <span class="error-message" id="passwordError"></span>
+    </div>
+    <button type="submit">Iniciar Sesión</button>
+    </form>
+    <p>¿No tienes una cuenta? <a href="{%url 'signup'%}">Regístrate aquí</a>.</p>
+</div>
+
+<img src= "{% static 'images/SesameLockBlanco.png' %}" alt="sesameLogo" class="decorative-image">
+{% endblock %}
