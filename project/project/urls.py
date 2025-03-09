@@ -26,4 +26,5 @@ urlpatterns = [
     path('entradas/', views.entradas, name="entradas"),
     path('salidas/', views.salidas, name="salidas"),
     path('estadisticas/', views.estadisticas, name="estadisticas"),
+    path('success/', views.add, name="add"),
 ]
