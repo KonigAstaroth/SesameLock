@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from firebase_admin import firestore
 
+
 db = firestore.client()
 
 
@@ -32,8 +33,6 @@ def add(request):
     username = request.POST["username"]
     password = request.POST["password"]
     confirmPassword = request.POST["confirmPassword"]
-
-    
 
     if password == confirmPassword:
         if '@' in email and name and lastName and username and password:
