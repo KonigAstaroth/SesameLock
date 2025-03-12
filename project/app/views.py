@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from firebase_admin import firestore, auth
 import requests
+from flask import Flask
 
 
 db = firestore.client()
@@ -11,10 +12,16 @@ FIREBASE_AUTH_URL = "https://identitytoolkit.googleapis.com/v1/accounts:signInWi
 # Create your views here.
 
 def inicio(request):
-    return render (request,'inicio.html')
+    session_cookie = flask.request.cookies.get('session')
+    if not session_cookie:
+         
+        return render (request,'inicio.html')
 
 def signup (request):
-    return render (request, 'signup.html')
+    if request.method == "POST":
+
+         
+        return render (request, 'signup.html')
 
 def login (request):
         if request.method == "POST":
@@ -28,10 +35,9 @@ def login (request):
                 user_data = response.json()
                 request.session["firebase_uid"] = user_data["localId"]
                 request.session["email"] = email
-                print(response.text)
                 return redirect("inicio")
             else:
-                return("<h1> Usuario o contrasena incorrectos </h1>")
+                return render (request, 'login.html')
         return render (request, 'login.html')
 
 def entradas (request):
@@ -62,12 +68,19 @@ def add(request):
                 "username": username,
                 
         })
-                return render (request, 'signupSuccess.html') 
+                return render (request, 'login') 
             except Exception as e:
                     return HttpResponse(f"<h1>Error al registrar usuario: {str(e)}</h1>")
         else :
                 return HttpResponse("<h1> Datos faltantes </h1>")
 
     return HttpResponse("<h1> La contrasena no coincide </h1>")
+
+def logout(request):
+     request.session.flush()
+     return redirect('login')
+
+def aboutSesame(request):
+     return render(request, 'aboutSesame')
 
     

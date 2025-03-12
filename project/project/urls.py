@@ -20,11 +20,15 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.inicio, name="inicio"),
-    path('signup/', views.signup, name="signup"),
+    path('', views.signup, name="signup"),
     path('login/', views.login, name="login"),
     path('entradas/', views.entradas, name="entradas"),
     path('salidas/', views.salidas, name="salidas"),
     path('estadisticas/', views.estadisticas, name="estadisticas"),
     path('success/', views.add, name="add"),
+    path('main/', views.inicio, name = 'inicio'),
+    path('main/', views.inicio, name = 'inicio'),
+    path('logout/', views.logout, name = "logout"),
+    path('aboutsesame/', views.aboutSesame, name = "aboutSesame"),
+
 ]

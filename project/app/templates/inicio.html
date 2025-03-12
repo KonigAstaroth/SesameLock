@@ -12,15 +12,7 @@
 
 {% block contenido %}
 <div class="blockContainer">
-    <div class="block">
-        <div class="half">
-            <h1>Cámara</h1>
-            <div class="camera">
-
-            </div>
-            <h2>¡Vincula tu dispositivo para acceder a todas las funciones!</h2>
-        </div>
-    </div>
+    
     <div class="block">
         <div class="half">
             <h1>Invitados</h1>
@@ -61,29 +53,57 @@
                     </div>
                 </div>
             </div>
+            
         </div>
+
+        
     </div>
-    <div class="block">
-        <div class="quarter">
-            <h1>Última entrada</h1>
-            <h2>Usuario X</h2>
-            <h2>dd/mm/yyyy</h2>
-            <h2>00:00 X.X.</h2>
+    <div>
+        <div class="block">
+            <div class="quarter">
+                <h1>Agrega el ID de tu dispositivo</h1>
+                <button  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#id-device" style="margin-left: 10%;">
+                    ¡Haz click aqui!
+                </button>
+            </div>
         </div>
-    </div>
-    <div class="block">
-        <div class="quarter">
-            <h1>Última salida</h1>
-            <h2>Usuario X</h2>
-            <h2>dd/mm/yyyy</h2>
-            <h2>00:00 X.X.</h2>
+        <div class="block">
+            <div class="quarter">
+                <h1>Último acceso</h1>
+                <h2>Usuario X</h2>
+                <h2>dd/mm/yyyy</h2>
+                <h2>00:00 X.X.</h2>
+            </div>
         </div>
-    </div>
-    <div class="block">
-        <div class="half">
-            <h1>Última alerta</h1>
-            <h2>Sujeto desconocido detectado el 15 de Febrero. Hora: 02:43 P.M.</h2>
+        <div class="block">
+            <div class="half">
+                <h1>Última alerta</h1>
+                <h2>Sujeto desconocido detectado el 15 de Febrero. Hora: 02:43 P.M.</h2>
+            </div>
         </div>
+
     </div>
+    
 </div>
+
+<div class="modal fade" id="id-device" tabindex="-1" aria-labelledby="id-deviceLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ide-deviceLabel">Ingresa el ID de tu dispositivo SesameLock</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="input_id" id="device_id">
+        </div>
+        <div class="modal-footer">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-primary" data-bs-dismiss="modal">Enviar</button>
+            </form>
+          
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
