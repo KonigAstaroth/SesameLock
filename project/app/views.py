@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from firebase_admin import firestore, auth
 import requests
-from flask import Flask
+from datetime import datetime, timedelta
 
 
 db = firestore.client()
@@ -11,13 +11,18 @@ FIREBASE_AUTH_URL = "https://identitytoolkit.googleapis.com/v1/accounts:signInWi
 
 # Create your views here.
 
+
 def inicio(request):
-    session_cookie = flask.request.cookies.get('session')
+    session_cookie = request.COOKIES.get('sessionid')
     if not session_cookie:
-         
-        return render (request,'inicio.html')
+        return redirect('/login')
+    
+    return render (request,'inicio.html')
 
 def signup (request):
+    session_cookie = request.COOKIES.get('sessionid')
+    if not session_cookie:
+        return redirect('/signup')
     if request.method == "POST":
 
          
@@ -36,15 +41,11 @@ def login (request):
                 request.session["firebase_uid"] = user_data["localId"]
                 request.session["email"] = email
                 return redirect("inicio")
+               
             else:
                 return render (request, 'login.html')
         return render (request, 'login.html')
 
-def entradas (request):
-    return render (request, 'entradas.html')
-
-def salidas (request):
-    return render (request, 'salidas.html')
 
 def estadisticas (request):
     return render (request, 'estadisticas.html')
