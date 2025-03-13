@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from firebase_admin import firestore, auth
 import requests
-from datetime import datetime, timedelta
+
 
 
 db = firestore.client()
@@ -17,6 +17,12 @@ def inicio(request):
     if not session_cookie:
         return redirect('/login')
     
+    if request.method == "POST":
+         id = request.POST["input_id"]
+         uid = auth.current_user["localId"]
+         user =db.collection("Usuarios").document(uid)
+         user.update({"SesameId": id})
+    
     return render (request,'inicio.html')
 
 def signup (request):
@@ -24,8 +30,6 @@ def signup (request):
     if not session_cookie:
         return redirect('/signup')
     if request.method == "POST":
-
-         
         return render (request, 'signup.html')
 
 def login (request):
@@ -40,6 +44,7 @@ def login (request):
                 user_data = response.json()
                 request.session["firebase_uid"] = user_data["localId"]
                 request.session["email"] = email
+                request.session["firebase_token"] = user_data["idToken"]
                 return redirect("inicio")
                
             else:
