@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from firebase_admin import firestore, auth
 import requests
+from google.cloud.firestore_v1 import FieldFilter
+from django.urls import reverse
+import firebase_admin
+
 
 
 
@@ -14,23 +18,49 @@ FIREBASE_AUTH_URL = "https://identitytoolkit.googleapis.com/v1/accounts:signInWi
 
 def inicio(request):
     session_cookie = request.COOKIES.get('sessionid')
+    
     if not session_cookie:
         return redirect('/login')
     
-    if request.method == "POST":
-         id = request.POST["input_id"]
-         uid = auth.current_user["localId"]
-         user =db.collection("Usuarios").document(uid)
-         user.update({"SesameId": id})
-    
-    return render (request,'inicio.html')
+    error_message = request.GET.get('error', None)
+                
+    return render(request, 'inicio.html', {'error_message': error_message})
+
+def regDev(request):
+     firebase_token = request.session.get("firebase_token")
+     decoded_token = auth.verify_id_token(firebase_token)
+     uid = decoded_token["uid"]
+     device_id = request.POST["device_id"]
+     code = request.POST["share_code"]
+
+     sesame_ref = db.collection("Sesame")
+     query_ref = sesame_ref.where(filter=FieldFilter("idLock", "==", device_id )).stream()
+
+     
+     if any(query_ref):
+        
+        doc = query_ref.get()
+
+        db.collection("Usuarios").document(uid).update ({
+            "device_id": device_id
+        })
+
+        for doc in query_ref:
+            print(f"Documento encontrado con ID: {doc.id}")
+            db.collection("Sesame").document(doc.id).update ({
+        "share_code": code
+            })
+        
+        return redirect("inicio")
+     else:
+           url = reverse('inicio') + '?error=dispositivo_no_encontrado'
+           return redirect(url)
+     
 
 def signup (request):
-    session_cookie = request.COOKIES.get('sessionid')
-    if not session_cookie:
-        return redirect('/signup')
-    if request.method == "POST":
-        return render (request, 'signup.html')
+    
+    return render (request, 'signup.html')
+   
 
 def login (request):
         if request.method == "POST":
@@ -45,6 +75,7 @@ def login (request):
                 request.session["firebase_uid"] = user_data["localId"]
                 request.session["email"] = email
                 request.session["firebase_token"] = user_data["idToken"]
+                
                 return redirect("inicio")
                
             else:
@@ -74,7 +105,7 @@ def add(request):
                 "username": username,
                 
         })
-                return render (request, 'login') 
+                return redirect('login')
             except Exception as e:
                     return HttpResponse(f"<h1>Error al registrar usuario: {str(e)}</h1>")
         else :

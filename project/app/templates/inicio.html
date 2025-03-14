@@ -93,10 +93,12 @@
           <h5 class="modal-title" id="ide-deviceLabel">Ingresa el ID de tu dispositivo SesameLock</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
-        <form method="POST">
+        <form method="POST" action="/registerDevice/">
             {% csrf_token %}
             <div class="modal-body">
-                <input type="text" class="input_id" id="device_id">
+                <input type="text" class="input_id" name="device_id">
+                <h5 class="modal-title" id="ide-deviceLabel">Ingresa un codigo para tu dispositivo</h5>
+                <input type="text" class="input_id" name="share_code">
               </div>
               <div class="modal-footer">
                   <button type="submit" class="btn btn-outline-primary" data-bs-dismiss="modal">Enviar</button>
@@ -106,4 +108,10 @@
       </div>
     </div>
   </div>
+
+</div>
+
+
+    
+
 {% endblock %}
