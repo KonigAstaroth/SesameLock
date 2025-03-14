@@ -33,26 +33,27 @@ def regDev(request):
      device_id = request.POST["device_id"]
      code = request.POST["share_code"]
 
-     sesame_ref = db.collection("Sesame")
-     query_ref = sesame_ref.where(filter=FieldFilter("idLock", "==", device_id )).stream()
+     print(device_id)
+     print(type(device_id))
 
+     sesame_ref = db.collection("Sesame")
+     query_ref = sesame_ref.where(filter=FieldFilter("idLock", "==", device_id)).get()
      
      if any(query_ref):
+        print("Hay elementos!!!!")
         
-        doc = query_ref.get()
-
         db.collection("Usuarios").document(uid).update ({
             "device_id": device_id
         })
-
         for doc in query_ref:
             print(f"Documento encontrado con ID: {doc.id}")
-            db.collection("Sesame").document(doc.id).update ({
-        "share_code": code
+            db.collection("Sesame").document(doc.id).update({
+            "share_code": code
             })
         
         return redirect("inicio")
      else:
+           print("there's nothing...")
            url = reverse('inicio') + '?error=dispositivo_no_encontrado'
            return redirect(url)
      
