@@ -13,7 +13,7 @@
 {% block contenido %}
 <div class="form-container">
     <h1>Registro</h1>
-    <form id="registerForm" method="post">
+    <form id="registerForm" method="POST" action="/success/">
       {% csrf_token %}
       <div class="form-group">
         <label for="name_lastName">Nombre y apellido</label>
