@@ -1,0 +1,80 @@
+
+body {
+    background-color: #001F60;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos del Navbar */
+.navbar {
+    background-color: #FFFFFF; /* Azul oscuro */
+    margin-top: 10px;
+    border-radius: 20px;
+    width: 90%;
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #001F60;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.navbar a:hover {
+    color: #4bccff;
+}
+
+.blockContainer {
+    margin: 30px;
+    width: 90%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.block {
+    width: auto;
+    height: auto;
+    display: flex;
+}
+
+.block p {
+    color: #FFFFFF;
+    font-size: 25px;
+    margin-left: 2vw;
+    margin-top: 2vh;
+    text-align: justify;
+}
+
+.block h1 {
+    color: #FFFFFF;
+    font-size: 30px;
+    font-weight: bold;
+    margin-left: 2vw;
+    margin-top: 2vh;
+    text-align: center;
+}
+
+.block .half {
+    width: 44vw;
+}
+
+.block .full {
+    width: 90vw;
+}
+
+.block .image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: 100%;
+}
