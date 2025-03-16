@@ -4,7 +4,9 @@ from firebase_admin import firestore, auth
 import requests
 from google.cloud.firestore_v1 import FieldFilter
 from django.urls import reverse
-import firebase_admin
+from django.contrib import messages
+import urllib.parse
+
 
 
 
@@ -23,8 +25,9 @@ def inicio(request):
         return redirect('/login')
     
     error_message = request.GET.get('error', None)
+    success_message = request.GET.get("success", None)
                 
-    return render(request, 'inicio.html', {'error_message': error_message})
+    return render(request, 'inicio.html', {'error_message': error_message, 'success_message': success_message})
 
 def regDev(request):
      firebase_token = request.session.get("firebase_token")
@@ -32,6 +35,7 @@ def regDev(request):
      uid = decoded_token["uid"]
      device_id = request.POST["device_id"]
      code = request.POST["share_code"]
+     
 
      print(device_id)
      print(type(device_id))
@@ -43,7 +47,8 @@ def regDev(request):
         print("Hay elementos!!!!")
         
         db.collection("Usuarios").document(uid).update ({
-            "device_id": device_id
+            "device_id": device_id,
+            
         })
         for doc in query_ref:
             print(f"Documento encontrado con ID: {doc.id}")
@@ -51,11 +56,12 @@ def regDev(request):
             "share_code": code
             })
         
-        return redirect("inicio")
+        success_message = "Dispositivo registrado"
+        return redirect(f"/main?success={urllib.parse.quote(success_message)}")
      else:
            print("there's nothing...")
-           url = reverse('inicio') + '?error=dispositivo_no_encontrado'
-           return redirect(url)
+           error_message = "No se encontró ningún dispositivo con ese ID"
+           return redirect(f"/main?error={urllib.parse.quote(error_message)}")
      
 
 def signup (request):

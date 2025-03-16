@@ -11,6 +11,39 @@
 {% endblock %}
 
 {% block contenido %}
+
+{% if success_message %}
+    <div class="alert alert-success" style="width: 50%; text-align: center;" id="success-alert">
+        {{ success_message }}
+        <script>
+            setTimeout(function() {
+                var successbox = document.getElementById("success-alert");
+                if (successbox) {
+                    successbox.style.transition = "opacity 0.75s";
+                    successbox.style.opacity = "0";
+                    setTimeout(() => successbox.remove(), 500); 
+                }
+            }, 3000); 
+        </script>
+    </div>
+{% endif %}
+
+{% if error_message %}
+    <div class="alert alert-danger" style="width: 50%; text-align: center;" id="error-alert">
+        {{ error_message }}
+        <script>
+            setTimeout(function() {
+                var alertBox = document.getElementById("error-alert");
+                if (alertBox) {
+                    alertBox.style.transition = "opacity 0.75s";
+                    alertBox.style.opacity = "0";
+                    setTimeout(() => alertBox.remove(), 500); 
+                }
+            }, 3000); 
+        </script>
+    </div>
+{% endif %}
+
 <div class="blockContainer">
     
     <div class="block">
@@ -110,6 +143,7 @@
   </div>
 
 </div>
+
 
 
     
