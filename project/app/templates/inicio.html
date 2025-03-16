@@ -7,13 +7,19 @@
 {% endblock %}
 
 {% block links %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=add" />
 
 {% endblock %}
 
 {% block contenido %}
 
+<div class="welcome">
+    <h1>Bienvenido de nuevo, {{ name }}</h1>
+</div>
+
+
 {% if success_message %}
-    <div class="alert alert-success" style="width: 50%; text-align: center;" id="success-alert">
+    <div class="alert alert-success" style="width: 50%; text-align: center; z-index: 999; margin-top: -5%;" id="success-alert">
         {{ success_message }}
         <script>
             setTimeout(function() {
@@ -29,7 +35,7 @@
 {% endif %}
 
 {% if error_message %}
-    <div class="alert alert-danger" style="width: 50%; text-align: center;" id="error-alert">
+    <div class="alert alert-danger" style="width: 50%; text-align: center z; z-index: 999; margin-top: -5%;" id="error-alert">
         {{ error_message }}
         <script>
             setTimeout(function() {
@@ -45,10 +51,12 @@
 {% endif %}
 
 <div class="blockContainer">
-    
     <div class="block">
         <div class="half">
-            <h1>Invitados</h1>
+            <h1>Invitados <span style="margin-left: 60%;"><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-guests" style="margin-top: -1%;">
+                ¡Agregar invitados!
+            </button></span></h1>
+            
             <div class="users">
                 <div class="usercard">
                     <img src="{% static 'images/profile.jpg' %}" alt="Profile">
@@ -130,8 +138,31 @@
             {% csrf_token %}
             <div class="modal-body">
                 <input type="text" class="input_id" name="device_id">
-                <h5 class="modal-title" id="ide-deviceLabel">Ingresa un codigo para tu dispositivo</h5>
+                <h5 class="modal-title" id="id-deviceLabel">Ingresa un codigo para tu dispositivo</h5>
                 <input type="text" class="input_id" name="share_code">
+              </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-outline-primary" data-bs-dismiss="modal">Enviar</button>
+              </div>
+        </form>
+        
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal fade" id="add-guests" tabindex="-1" aria-labelledby="add-guestsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ingresa el nombre de un invitado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <form method="POST" action="/addGuests/">
+            {% csrf_token %}
+            <div class="modal-body">
+                <input type="text" class="input_id" name="guest_name">
               </div>
               <div class="modal-footer">
                   <button type="submit" class="btn btn-outline-primary" data-bs-dismiss="modal">Enviar</button>

@@ -24,10 +24,30 @@ def inicio(request):
     if not session_cookie:
         return redirect('/login')
     
+    firebase_token = request.session.get("firebase_token")
+    decoded_token = auth.verify_id_token(firebase_token)
+    uid = decoded_token["uid"]
+    doc_ref = db.collection("Usuarios").document(uid)
+    doc = doc_ref.get()
+    name = doc.to_dict().get("name")
+    
+    
     error_message = request.GET.get('error', None)
     success_message = request.GET.get("success", None)
                 
-    return render(request, 'inicio.html', {'error_message': error_message, 'success_message': success_message})
+    return render(request, 'inicio.html', {'error_message': error_message, 'success_message': success_message, 'name' : name})
+
+def regInv(request):
+    firebase_token = request.session.get("firebase_token")
+    decoded_token = auth.verify_id_token(firebase_token)
+    uid = decoded_token["uid"]
+    doc_ref = db.collection("Usuarios").document(uid)
+    guest_name = request.POST["guest_name"]
+    doc_ref.update({"Invitados": firestore.ArrayUnion([guest_name])})
+    
+    success_message = "Invitado agregado"
+    return redirect(f"/main?success={urllib.parse.quote(success_message)}")
+
 
 def regDev(request):
      firebase_token = request.session.get("firebase_token")
@@ -35,8 +55,6 @@ def regDev(request):
      uid = decoded_token["uid"]
      device_id = request.POST["device_id"]
      code = request.POST["share_code"]
-     
-
      print(device_id)
      print(type(device_id))
 
@@ -48,7 +66,7 @@ def regDev(request):
         
         db.collection("Usuarios").document(uid).update ({
             "device_id": device_id,
-            
+            "Permisos":True
         })
         for doc in query_ref:
             print(f"Documento encontrado con ID: {doc.id}")

@@ -27,6 +27,7 @@ urlpatterns = [
     path('main/', views.inicio, name = 'inicio'),
     path('logout/', views.logout, name = "logout"),
     path('aboutsesame/', views.aboutSesame, name = "aboutSesame"),
-    path('registerDevice/', views.regDev, name="regDev")
+    path('registerDevice/', views.regDev, name="regDev"),
+    path('addGuests/', views.regInv, name="regInv")
 
 ]
