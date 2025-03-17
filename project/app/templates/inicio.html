@@ -58,41 +58,23 @@
             </button></span></h1>
             
             <div class="users">
-                <div class="usercard">
-                    <img src="{% static 'images/profile.jpg' %}" alt="Profile">
-                    <div class="text">
-                        <h2>Usuario</h2>
-                        <h3>Permiso</h3>
-                    </div>
-                </div>
-                <div class="usercard">
-                    <img src="{% static 'images/profile.jpg' %}" alt="Profile">
-                    <div class="text">
-                        <h2>Usuario</h2>
-                        <h3>Permiso</h3>
-                    </div>
-                </div>
-                <div class="usercard">
-                    <img src="{% static 'images/profile.jpg' %}" alt="Profile">
-                    <div class="text">
-                        <h2>Usuario</h2>
-                        <h3>Permiso</h3>
-                    </div>
-                </div>
-                <div class="usercard">
-                    <img src="{% static 'images/profile.jpg' %}" alt="Profile">
-                    <div class="text">
-                        <h2>Usuario</h2>
-                        <h3>Permiso</h3>
-                    </div>
-                </div>
-                <div class="usercard">
-                    <img src="{% static 'images/profile.jpg' %}" alt="Profile">
-                    <div class="text">
-                        <h2>Usuario</h2>
-                        <h3>Permiso</h3>
-                    </div>
-                </div>
+                {% if Invitados %}
+                    {% for invitado in Invitados%}
+                        <div class="usercard">
+                        
+                            <img src="{% static 'images/profile.jpg' %}" alt="Profile">
+                        
+                            <div class="text">
+                                <h2> {{ invitado }}</h2>
+                                <a href="?eliminar={{ invitado|urlencode }}" class="delete_guest"> Eliminar</a>
+                            </div>
+                            
+                        </div>
+                    
+                    {% endfor %}
+                {% else %}
+                    <h2>No hay invitados</h2>
+                {% endif %}
             </div>
             
         </div>

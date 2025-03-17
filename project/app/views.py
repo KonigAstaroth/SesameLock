@@ -29,13 +29,22 @@ def inicio(request):
     uid = decoded_token["uid"]
     doc_ref = db.collection("Usuarios").document(uid)
     doc = doc_ref.get()
-    name = doc.to_dict().get("name")
+
+    if doc.exists:
+        data = doc.to_dict()
+        name = doc.to_dict().get("name")
+        Invitados = data.get("Invitados", [])
+
+    invitado_a_eliminar = request.GET.get("eliminar", None)
     
-    
+    if invitado_a_eliminar and invitado_a_eliminar in Invitados:
+        doc_ref.update({"Invitados": firestore.ArrayRemove([invitado_a_eliminar])})
+        return redirect('/main')
+         
     error_message = request.GET.get('error', None)
     success_message = request.GET.get("success", None)
                 
-    return render(request, 'inicio.html', {'error_message': error_message, 'success_message': success_message, 'name' : name})
+    return render(request, 'inicio.html', {'error_message': error_message, 'success_message': success_message, 'name' : name, "Invitados": Invitados})
 
 def regInv(request):
     firebase_token = request.session.get("firebase_token")
@@ -44,7 +53,6 @@ def regInv(request):
     doc_ref = db.collection("Usuarios").document(uid)
     guest_name = request.POST["guest_name"]
     doc_ref.update({"Invitados": firestore.ArrayUnion([guest_name])})
-    
     success_message = "Invitado agregado"
     return redirect(f"/main?success={urllib.parse.quote(success_message)}")
 

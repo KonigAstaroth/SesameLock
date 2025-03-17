@@ -28,6 +28,7 @@ urlpatterns = [
     path('logout/', views.logout, name = "logout"),
     path('aboutsesame/', views.aboutSesame, name = "aboutSesame"),
     path('registerDevice/', views.regDev, name="regDev"),
-    path('addGuests/', views.regInv, name="regInv")
+    path('addGuests/', views.regInv, name="regInv"),
+    
 
 ]
