@@ -1,5 +1,6 @@
 h1 {
     color: #001C51;
+    
 }
 
 body {
@@ -111,4 +112,7 @@ body {
     margin-left: 1%;
     width: 5%; /* Ajusta el tamaño de la imagen */
     height: auto; /* Mantiene la proporción de la imagen */
+    
   }
+
+  

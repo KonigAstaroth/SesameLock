@@ -12,7 +12,8 @@
 
 {% block contenido %}
 <div class="form-container">
-    <h1>Iniciar Sesión</h1>
+    <br>
+    <h1 style="font-weight: bold;">Iniciar Sesión</h1>
     <form id="loginForm" method="POST">
     {% csrf_token %}
     <div class="form-group">
@@ -30,5 +31,8 @@
     <p>¿No tienes una cuenta? <a href="{%url 'signup'%}">Regístrate aquí</a>.</p>
 </div>
 
-<img src= "{% static 'images/SesameLockBlanco.png' %}" alt="sesameLogo" class="decorative-image">
+<div>
+    <img src= "{% static 'images/SesameLockBlanco.png' %}" alt="sesameLogo" class="decorative-image"><span><h2 class = "decorative-image" style="margin-left: 7%; color: white; font-weight:bold">SesameLock</h2></span>
+    
+  </div>
 {% endblock %}

@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block links %}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=add" />
+
 
 {% endblock %}
 
@@ -19,7 +19,7 @@
 
 
 {% if success_message %}
-    <div class="alert alert-success" style="width: 50%; text-align: center; z-index: 999; margin-top: -5%;" id="success-alert">
+    <div class="alert alert-success" style="width: 50%; text-align: center; z-index: 999; position: fixed; top: 0;" id="success-alert">
         {{ success_message }}
         <script>
             setTimeout(function() {
@@ -35,7 +35,7 @@
 {% endif %}
 
 {% if error_message %}
-    <div class="alert alert-danger" style="width: 50%; text-align: center z; z-index: 999; margin-top: -5%;" id="error-alert">
+    <div class="alert alert-danger" style="width: 50%; text-align: center ; z-index: 999; position: fixed; top: 0;" id="error-alert">
         {{ error_message }}
         <script>
             setTimeout(function() {

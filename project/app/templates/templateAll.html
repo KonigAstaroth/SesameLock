@@ -22,15 +22,15 @@
                 <a href="{% url 'inicio' %}" class="logo">
                     <img src="{% static 'images/SesameLockBlanco.png' %}" alt="Logo">
                 </a>
-                <a href="{% url 'inicio' %}">
+                <a href="{% url 'inicio' %}" class="logotipo">
                     <h2 class="logotipo" style="margin-left: 5%;">SesameLock</h2>
                 </a>
                 
             </div>
             
-            <a href="#">Alertas</a>
-            <a href="{% url 'estadisticas' %}">Estadísticas</a>
-            <a href="{% url 'logout' %}">Cerrar sesión</a>
+            <a href="#" class="nav">Alertas</a>
+            <a href="{% url 'estadisticas' %}" class="nav">Estadísticas</a>
+            <a href="{% url 'logout' %}" class="logout">Cerrar sesión</a>
         </div>
     </nav>
     {% block contenido %}

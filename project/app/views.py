@@ -91,8 +91,9 @@ def regDev(request):
      
 
 def signup (request):
-    
-    return render (request, 'signup.html')
+    error_message = request.GET.get('error', None)
+    warning_message = request.GET.get('warning', None)
+    return render (request, 'signup.html', {'error_message': error_message, 'warning_message': warning_message})
    
 
 def login (request):
@@ -140,11 +141,14 @@ def add(request):
         })
                 return redirect('login')
             except Exception as e:
-                    return HttpResponse(f"<h1>Error al registrar usuario: {str(e)}</h1>")
+                    error_message = e
+                    return redirect(f"/signup?error={urllib.parse.quote(error_message)}")
         else :
-                return HttpResponse("<h1> Datos faltantes </h1>")
+                error_message = "Faltan campos por ser llenados"
+                return redirect(f"/signup?error={urllib.parse.quote(error_message)}")
 
-    return HttpResponse("<h1> La contrasena no coincide </h1>")
+    warning_message = "No coinciden las contraseñas"
+    return redirect(f"{reverse('signup')}?warning={urllib.parse.quote(warning_message)}")
 
 def logout(request):
      request.session.flush()
