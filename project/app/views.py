@@ -129,7 +129,7 @@ def add(request):
     confirmPassword = request.POST["confirmPassword"]
 
     if password == confirmPassword:
-        if '@' in email and name and lastName and username and password:
+        if name and lastName and username and password:
             try:
                 user = auth.create_user(email=email, password=password)
                 db.collection("Usuarios").document(user.uid).set ({

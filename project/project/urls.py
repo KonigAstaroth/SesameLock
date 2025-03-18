@@ -29,6 +29,6 @@ urlpatterns = [
     path('aboutsesame/', views.aboutSesame, name = "aboutSesame"),
     path('registerDevice/', views.regDev, name="regDev"),
     path('addGuests/', views.regInv, name="regInv"),
-    
+    path('signup/', views.signup, name="signup"),
 
 ]
