@@ -16,6 +16,8 @@ FIREBASE_AUTH_URL = "https://identitytoolkit.googleapis.com/v1/accounts:signInWi
 
 # Create your views here.
 
+def landing(request):
+     return render(request, 'landing.html')
 
 def inicio(request):
     session_cookie = request.COOKIES.get('sessionid')

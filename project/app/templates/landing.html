@@ -1,21 +1,15 @@
+{% extends "templateAll.html"%}
 {% load static %}
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        ¡Bienvenido!
-    </title>
 
-    <link rel="icon" type="image/png" href="{% static 'images/SesameLockBlanco.png' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/lp.css'%}">
-</head>
-<body>
-    <nav class="navbar">
-            <a href="#">Registrarse</a>
-            <a href="#">Iniciar sesión</a>
-    </nav>
+{% block titulo%}
+    Estadísticas
+{% endblock %}
+
+{% block links %}
+
+{% endblock %}
+
+{% block contenido %}
 
     <div class="blockContainer">
         <div class="block">
@@ -42,22 +36,19 @@
         <div class="block">
             <div class="half">
                 <div class="image">
-                    <img src="{% static 'images/SesameLockBlanco.png' %}" alt="">
+                    <img src="{% static 'images/SesameLockNegro.png' %}" alt="">
                 </div>
             </div>
         </div>
         <div class="block">
             <div class="full">
-                <h1>
+                <h1 style="text-align: center;">
                     Seguridad sin esfuerzo. Control total.
                 </h1>
-                <h1>
+                <h1 style="text-align: center;">
                     Bienvenido a SesameLock.
                 </h1>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

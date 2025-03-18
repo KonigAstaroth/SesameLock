@@ -98,10 +98,11 @@ body {
 }
 
 .block p {
-    color: #FFFFFF;
+    color: #001F60;
     font-size: 25px;
     margin-left: 2vw;
     margin-top: 2vh;
+    margin-right: 2vw;
     text-align: justify;
 }
 
