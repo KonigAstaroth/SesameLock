@@ -84,5 +84,3 @@ def add(request):
                 return HttpResponse("<h1> Datos faltantes </h1>")
 
     return HttpResponse("<h1> La contrasena no coincide </h1>")
-
-    
