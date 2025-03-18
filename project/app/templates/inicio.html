@@ -101,7 +101,11 @@
         <div class="block">
             <div class="half">
                 <h1>Última alerta</h1>
-                <h2>Sujeto desconocido detectado el 15 de Febrero. Hora: 02:43 P.M.</h2>
+                {% if ultima_alerta %}
+                    <h2>Sujeto desconocido detectado el {{ ultima_alerta.timestamp|date:"d F Y - h:i A" }}.</h2>
+                {% else %}
+                    <h2>No hay alertas registradas.</h2>
+                {% endif %}
             </div>
         </div>
 

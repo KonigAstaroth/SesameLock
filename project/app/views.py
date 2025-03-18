@@ -33,15 +33,21 @@ def inicio(request):
         data = doc.to_dict()
         name = doc.to_dict().get("name")
         Invitados = data.get("Invitados", [])
-        device = data.get("idLock")
+        device = data.get("device_id")
 
     sesame_ref = db.collection("Sesame")
-    query_ref = sesame_ref.where(filter=FieldFilter("idLock", "==", device)).get()
+    sesame_query = sesame_ref.where(filter=FieldFilter("idLock", "==", device)).get()
+    ultima_alerta = None
 
-    if any(query_ref):
-         alerts_ref = sesame_ref.get()
-         datos = alerts_ref.to_dict()
-         map_alerts = datos.get("Alertas", {})
+    if sesame_query:
+        sesame_doc = sesame_query[0]
+        sesame_data = sesame_doc.to_dict()
+    
+    
+    if sesame_data.get("Alertas"):
+        ultima_alerta = sesame_data["Alertas"][0]  
+    else:
+        ultima_alerta = None
         
 
     invitado_a_eliminar = request.GET.get("eliminar", None)
@@ -53,7 +59,7 @@ def inicio(request):
     error_message = request.GET.get('error', None)
     success_message = request.GET.get("success", None)
                 
-    return render(request, 'inicio.html', {'error_message': error_message, 'success_message': success_message, 'name' : name, "Invitados": Invitados})
+    return render(request, 'inicio.html', {'error_message': error_message, 'success_message': success_message, 'name' : name, "Invitados": Invitados, "ultima_alerta": ultima_alerta})
 
 def regInv(request):
     firebase_token = request.session.get("firebase_token")
