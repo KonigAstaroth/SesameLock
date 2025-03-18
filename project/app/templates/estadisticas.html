@@ -15,10 +15,69 @@
     <div class="block">
         <div class="half">
             <h1>Entradas registradas</h1>
-            <div class="camera">
-
+            <div class="container">
+                <div style="height: 400px; width: 35vw;">
+                    <canvas id="entradasChart"></canvas>
+                </div>
             </div>
-            <h2>¡Vincula tu dispositivo para acceder a todas las funciones!</h2>
+            
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                // Obtener el contexto del canvas
+                const ctx = document.getElementById('entradasChart').getContext('2d');
+                
+                // Datos hardcoded
+                const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                const conteos = [3, 6, 9, 8, 7, 4, 2];
+                
+                // Crear el gráfico
+                const entradasChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: dias,
+                        datasets: [{
+                            label: 'Entradas',
+                            data: conteos,
+                            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Entradas'
+                                },
+                                ticks: {
+                                    stepSize: 2
+                                },
+                                max: 10  // Para que coincida con tu gráfica original
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Día'
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Entradas registradas',
+                                font: {
+                                    size: 18
+                                }
+                            }
+                        }
+                    }
+                });
+            </script>
+            
         </div>
     </div>
     <div class="block">
