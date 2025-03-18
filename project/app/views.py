@@ -130,6 +130,18 @@ def login (request):
 def estadisticas (request):
     return render (request, 'estadisticas.html')
 
+def entradas_chart_view(request):
+    # Datos hardcoded para probar
+    dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+    conteos = [3, 6, 9, 8, 7, 4, 2]  # Valores que coinciden con tu gráfica original
+    
+    context = {
+        'dias': dias,
+        'conteos': conteos,
+    }
+    
+    return render(request, 'estadisticas.html', context)
+
 def add(request):
     name = request.POST["name"]
     lastName = request.POST["lastName"]
