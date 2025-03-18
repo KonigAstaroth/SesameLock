@@ -189,9 +189,10 @@ body {
 .welcome {
     color: #001F60;
     display: flex;
-    margin-right: 58%;
+    width: 100%;
     margin-top: 1%;
     position: relative;
+    margin-left: 10%;
     
 }
 

@@ -4,7 +4,6 @@ from firebase_admin import firestore, auth
 import requests
 from google.cloud.firestore_v1 import FieldFilter
 from django.urls import reverse
-from django.contrib import messages
 import urllib.parse
 
 
