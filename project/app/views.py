@@ -165,6 +165,6 @@ def logout(request):
      return redirect('login')
 
 def aboutSesame(request):
-     return render(request, 'aboutSesame')
+     return render(request, 'aboutSesame.html')
 
     

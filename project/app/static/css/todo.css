@@ -96,6 +96,15 @@ body {
     margin-left: 2vw;
 }
 
+.block p {
+    color: #001F60;
+    font-size: 25px;
+    margin-left: 2vw;
+    margin-top: 2vh;
+    margin-right: 2vw;
+    text-align: justify;
+}
+
 .block .quarter {
     width: 21vw;
 }
@@ -115,6 +124,14 @@ body {
     height: 300px;
     margin-left: 2vw;
     margin-bottom: 20px;
+}
+
+.block .image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: 100%;
 }
 
 .users {
