@@ -33,6 +33,16 @@ def inicio(request):
         data = doc.to_dict()
         name = doc.to_dict().get("name")
         Invitados = data.get("Invitados", [])
+        device = data.get("idLock")
+
+    sesame_ref = db.collection("Sesame")
+    query_ref = sesame_ref.where(filter=FieldFilter("idLock", "==", device)).get()
+
+    if any(query_ref):
+         alerts_ref = sesame_ref.get()
+         datos = alerts_ref.to_dict()
+         map_alerts = datos.get("Alertas", {})
+        
 
     invitado_a_eliminar = request.GET.get("eliminar", None)
     
@@ -54,6 +64,7 @@ def regInv(request):
     doc_ref.update({"Invitados": firestore.ArrayUnion([guest_name])})
     success_message = "Invitado agregado"
     return redirect(f"/main?success={urllib.parse.quote(success_message)}")
+
 
 
 def regDev(request):
