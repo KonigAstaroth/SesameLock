@@ -213,6 +213,10 @@ body {
     color: white;
     height: 180px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 .logotipo{
     color: white;
