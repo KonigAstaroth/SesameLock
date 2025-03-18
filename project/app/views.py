@@ -37,17 +37,20 @@ def inicio(request):
 
     sesame_ref = db.collection("Sesame")
     sesame_query = sesame_ref.where(filter=FieldFilter("idLock", "==", device)).get()
-    ultima_alerta = None
+    
 
+    ultima_alerta = None
     if sesame_query:
         sesame_doc = sesame_query[0]
         sesame_data = sesame_doc.to_dict()
     
     
-    if sesame_data.get("Alertas"):
-        ultima_alerta = sesame_data["Alertas"][0]  
+        if sesame_data.get("Alertas"):
+            ultima_alerta = sesame_data["Alertas"][0]  
+        else:
+            ultima_alerta = None
     else:
-        ultima_alerta = None
+        sesame_query = None
         
 
     invitado_a_eliminar = request.GET.get("eliminar", None)
