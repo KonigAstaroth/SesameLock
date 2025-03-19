@@ -180,6 +180,7 @@ body {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     transition: max-height 0.5s ease-in-out;
     border-radius: 5px;
+    z-index: 999;
 }
 
 /* Mostrar cuando se hace clic */
@@ -190,6 +191,7 @@ body {
 /* Contenido de Notificaciones */
 .notifications-content {
     padding: 15px;
+    
 }
 
 /* Capa de fondo para cerrar el modal al hacer clic fuera */

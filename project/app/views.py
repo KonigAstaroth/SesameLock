@@ -46,9 +46,22 @@ def inicio(request):
     
     
         if sesame_data.get("Alertas"):
-            ultima_alerta = sesame_data["Alertas"][0]  
+            ultima_alerta = sesame_data["Alertas"][-1]  
         else:
             ultima_alerta = None
+    else:
+        sesame_query = None
+
+    ultimo_acceso = None
+    if sesame_query:
+        sesame_doc = sesame_query[0]
+        sesame_data = sesame_doc.to_dict()
+    
+    
+        if sesame_data.get("Accesos"):
+            ultimo_acceso = sesame_data["Accesos"][-1]  
+        else:
+            ultimo_acceso = None
     else:
         sesame_query = None
         
@@ -62,7 +75,14 @@ def inicio(request):
     error_message = request.GET.get('error', None)
     success_message = request.GET.get("success", None)
                 
-    return render(request, 'inicio.html', {'error_message': error_message, 'success_message': success_message, 'name' : name, "Invitados": Invitados, "ultima_alerta": ultima_alerta})
+    return render(request, 'inicio.html', {
+         'error_message': error_message, 
+         'success_message': success_message, 
+         'name' : name, 
+         "Invitados": Invitados, 
+         "ultima_alerta": ultima_alerta,
+         "ultimo_acceso": ultimo_acceso
+         })
 
 def regInv(request):
     firebase_token = request.session.get("firebase_token")

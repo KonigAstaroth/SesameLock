@@ -92,10 +92,14 @@
         </div>
         <div class="block">
             <div class="quarter">
-                <h1>Último acceso</h1>
-                <h2>Usuario X</h2>
-                <h2>dd/mm/yyyy</h2>
-                <h2>00:00 X.X.</h2>
+                {% if ultimo_acceso %}
+                    <h1>Último acceso</h1>
+                    <h2>Clave: {{ ultimo_acceso.clave }}</h2>
+                    <h2>{{ ultimo_acceso.timestamp|date:"d F Y" }}</h2>
+                    <h2>{{ ultimo_acceso.timestamp|date:"h:i A" }}</h2>
+                {% else %}
+                    <h2>No hay accesos registrados.</h2>
+                {% endif %}
             </div>
         </div>
         <div class="block">
