@@ -13,81 +13,114 @@
 {% block contenido %}
 <div class="blockContainer">
     <div class="block">
-        <div class="half">
+        <div class="full">
             <h1>Entradas registradas</h1>
-            <div class="container">
-                <div style="height: 400px; width: 35vw;">
-                    <canvas id="entradasChart"></canvas>
-                </div>
+            <div class="container mt-4">
+                        <canvas id="accessChart" width="400" height="200"></canvas>
+                <!-- Añadir un div para mostrar errores -->
+                <div id="error-container" class="alert alert-danger mt-3" style="display: none;"></div>
             </div>
             
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script>
-                // Obtener el contexto del canvas
-                const ctx = document.getElementById('entradasChart').getContext('2d');
-                
-                // Datos hardcoded
-                const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-                const conteos = [3, 6, 9, 8, 7, 4, 2];
-                
-                // Crear el gráfico
-                const entradasChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: dias,
-                        datasets: [{
-                            label: 'Entradas',
-                            data: conteos,
-                            backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Entradas'
+                document.addEventListener('DOMContentLoaded', function() {
+                    console.log("Cargando gráfica de accesos...");
+                    
+                    // Obtener datos de acceso desde el backend
+                    fetch('/api/accesos-data/')
+                        .then(response => {
+                            console.log("Respuesta del servidor:", response.status);
+                            if (!response.ok) {
+                                return response.json().then(errData => {
+                                    throw new Error('Error del servidor: ' + (errData.error || response.statusText));
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log("Datos recibidos:", data);
+                            
+                            // Verificar si los datos son válidos
+                            if (!data || !data.labels || !data.counts) {
+                                console.error("Datos incompletos:", data);
+                                throw new Error('Datos incompletos recibidos del servidor');
+                            }
+                            
+                            // Si llegamos aquí, tenemos datos válidos
+                            const ctx = document.getElementById('accessChart');
+                            
+                            // Crear la gráfica
+                            new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: data.labels,
+                                    datasets: [{
+                                        label: 'Número de Accesos',
+                                        data: data.counts,
+                                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    }]
                                 },
-                                ticks: {
-                                    stepSize: 2
-                                },
-                                max: 10  // Para que coincida con tu gráfica original
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Día'
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            ticks: {
+                                                precision: 0
+                                            }
+                                        }
+                                    },
+                                    plugins: {
+                                        title: {
+                                            display: true,
+                                            text: 'Accesos de los últimos 7 días'
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                title: function(context) {
+                                                    const index = context[0].dataIndex;
+                                                    return data.tooltips && data.tooltips[index] ? 
+                                                           data.tooltips[index].date : 
+                                                           data.labels[index];
+                                                },
+                                                label: function(context) {
+                                                    return `${context.raw} accesos`;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            console.log("Gráfica creada exitosamente");
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar los datos:', error);
+                            // Mostrar el error en la página
+                            const errorContainer = document.getElementById('error-container');
+                            if (errorContainer) {
+                                errorContainer.textContent = 'Error al cargar la gráfica: ' + error.message;
+                                errorContainer.style.display = 'block';
+                            } else {
+                                // Si no existe el contenedor de error, crear uno
+                                const chart = document.getElementById('accessChart');
+                                if (chart && chart.parentNode) {
+                                    const errorDiv = document.createElement('div');
+                                    errorDiv.className = 'alert alert-danger mt-3';
+                                    errorDiv.textContent = 'Error al cargar la gráfica: ' + error.message;
+                                    chart.parentNode.appendChild(errorDiv);
                                 }
                             }
-                        },
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Entradas registradas',
-                                font: {
-                                    size: 18
-                                }
-                            }
-                        }
-                    }
+                        });
                 });
             </script>
-            
         </div>
     </div>
     <div class="block">
         <div class="half">
-            <h1>Salidas registradas</h1>
-            
-        </div>
-    </div>
-    <div class="block">
-        <div class="quarter">
             <h1>Día con más entradas</h1>
             <h2>Día</h2>
             <h2>dd/mm/yyyy</h2>
@@ -95,18 +128,11 @@
         </div>
     </div>
     <div class="block">
-        <div class="quarter">
+        <div class="half">
             <h1>Día con más salidas</h1>
             <h2>Día</h2>
             <h2>dd/mm/yyyy</h2>
             <h2>X entradas</h2>
-        </div>
-    </div>
-    <div class="block">
-        <div class="half">
-            <h1>Persona con más registros</h1>
-            <h2>Usuario X</h2>
-            <h2>X registros</h2>
         </div>
     </div>
 </div>

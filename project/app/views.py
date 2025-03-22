@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from firebase_admin import firestore, auth
 import requests
 from google.cloud.firestore_v1 import FieldFilter
 from django.urls import reverse
 import urllib.parse
-
-
+from datetime import datetime, timedelta
+import pytz
+from collections import deque
 
 
 
@@ -155,21 +156,162 @@ def login (request):
                 return render (request, 'login.html')
         return render (request, 'login.html')
 
-
-def estadisticas (request):
-    return render (request, 'estadisticas.html')
-
-def entradas_chart_view(request):
-    # Datos hardcoded para probar
-    dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
-    conteos = [3, 6, 9, 8, 7, 4, 2]  # Valores que coinciden con tu gráfica original
+def estadisticas(request):
+    session_cookie = request.COOKIES.get('sessionid')
     
-    context = {
-        'dias': dias,
-        'conteos': conteos,
-    }
+    if not session_cookie:
+        return redirect('/login')
     
-    return render(request, 'estadisticas.html', context)
+    firebase_token = request.session.get("firebase_token")
+    decoded_token = auth.verify_id_token(firebase_token)
+    uid = decoded_token["uid"]
+    
+    return render(request, 'estadisticas.html')
+
+def api_accesos_data(request):
+    try:
+        # Verificar autenticación
+        firebase_token = request.session.get("firebase_token")
+        if not firebase_token:
+            return JsonResponse({"error": "No autorizado", "details": "Token no encontrado"}, status=401)
+        
+        try:
+            decoded_token = auth.verify_id_token(firebase_token)
+            uid = decoded_token["uid"]
+        except Exception as e:
+            return JsonResponse({"error": "Error de autenticación", "details": str(e)}, status=401)
+        
+        # Obtener el device_id del usuario
+        user_doc = db.collection("Usuarios").document(uid).get()
+        if not user_doc.exists:
+            return JsonResponse({"error": "Usuario no encontrado"}, status=404)
+        
+        user_data = user_doc.to_dict()
+        device_id = user_data.get("device_id")
+        
+        if not device_id:
+            # Si no hay device_id, regresamos datos vacíos pero válidos
+            empty_data = {
+                "labels": ["1", "2", "3", "4", "5", "6", "7"],
+                "counts": [0, 0, 0, 0, 0, 0, 0],
+                "tooltips": [{"date": "Sin datos"} for _ in range(7)]
+            }
+            return JsonResponse(empty_data)
+        
+        # Obtener documento de Sesame con el device_id
+        sesame_docs = db.collection("Sesame").where(filter=FieldFilter("idLock", "==", device_id)).get()
+        
+        if not sesame_docs:
+            empty_data = {
+                "labels": ["1", "2", "3", "4", "5", "6", "7"],
+                "counts": [0, 0, 0, 0, 0, 0, 0],
+                "tooltips": [{"date": "Sin datos"} for _ in range(7)]
+            }
+            return JsonResponse(empty_data)
+        
+        # Obtener todos los accesos
+        sesame_data = sesame_docs[0].to_dict()
+        accesos = sesame_data.get("Accesos", [])
+        
+        # Establecer zona horaria local (UTC-6 según los datos de ejemplo)
+        timezone = pytz.timezone('America/Mexico_City')  # UTC-6
+        
+        # Obtener fecha actual en la zona horaria local
+        now = datetime.now(timezone)
+        
+        # Crear un rango de 7 días hasta hoy
+        date_range = []
+        for i in range(6, -1, -1):
+            date = now - timedelta(days=i)
+            date_range.append(date)
+        
+        # Formatear labels para el eje X (día del mes) - CORREGIDO PARA COMPATIBILIDAD WINDOWS
+        labels = []
+        for date in date_range:
+            # Usar %d y luego eliminar ceros a la izquierda manualmente
+            day_str = date.strftime("%d").lstrip("0")
+            if day_str == "":  # En caso de que el día sea "01" y termine como ""
+                day_str = "1"
+            labels.append(day_str)
+        
+        # Inicializar conteo de accesos por día
+        daily_counts = [0] * 7
+        
+        # Crear información para tooltips
+        tooltips = []
+        for date in date_range:
+            # Usar formato compatible con Windows
+            month_names = {
+                1: "enero", 2: "febrero", 3: "marzo", 4: "abril", 5: "mayo", 6: "junio",
+                7: "julio", 8: "agosto", 9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
+            }
+            
+            day = date.strftime("%d").lstrip("0")
+            if day == "": day = "1"
+            month = month_names[date.month]
+            year = date.strftime("%Y")
+            
+            tooltip_date = f"{day} de {month} de {year}"
+            tooltips.append({
+                "date": tooltip_date
+            })
+        
+        # Contar accesos por día
+        for acceso in accesos:
+            try:
+                # Si es un timestamp de Firestore
+                if hasattr(acceso.get("timestamp"), "timestamp"):
+                    acceso_date = acceso.get("timestamp").astimezone(timezone)
+                else:
+                    # Si es un string formateado como en el ejemplo
+                    timestamp_str = acceso.get("timestamp")
+                    if not timestamp_str:
+                        continue
+                        
+                    # Ejemplo: "19 de marzo de 2025, 1:46:58 p.m. UTC-6"
+                    # Primero intentar con el formato esperado
+                    try:
+                        timestamp_str = timestamp_str.replace("de ", "").replace(",", "").replace(".", "").replace("UTC-6", "")
+                        acceso_date = datetime.strptime(timestamp_str, "%d %B %Y %I:%M:%S %p")
+                        acceso_date = timezone.localize(acceso_date)
+                    except ValueError:
+                        # Si falla, intentar con otro formato posible
+                        try:
+                            # Para timestamps en formato estándar de Firestore
+                            acceso_date = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+                            acceso_date = acceso_date.astimezone(timezone)
+                        except ValueError:
+                            # Si no podemos parsear el timestamp, ignoramos este acceso
+                            print(f"No se pudo parsear el timestamp: {timestamp_str}")
+                            continue
+                
+                # Verificar si el acceso está dentro del rango de 7 días
+                for i, date in enumerate(date_range):
+                    if (acceso_date.year == date.year and 
+                        acceso_date.month == date.month and 
+                        acceso_date.day == date.day):
+                        daily_counts[i] += 1
+                        break
+            except Exception as e:
+                # En caso de error al procesar la fecha, continúa con el siguiente acceso
+                print(f"Error al procesar fecha: {e}")
+                continue
+        
+        # Preparar datos para la respuesta
+        data = {
+            "labels": labels,
+            "counts": daily_counts,
+            "tooltips": tooltips
+        }
+        
+        return JsonResponse(data)
+    
+    except Exception as e:
+        # Capturar cualquier excepción no manejada
+        import traceback
+        traceback_str = traceback.format_exc()
+        print(f"Error no manejado: {e}\n{traceback_str}")
+        return JsonResponse({"error": "Error interno del servidor", "details": str(e)}, status=500)
 
 def add(request):
     name = request.POST["name"]
