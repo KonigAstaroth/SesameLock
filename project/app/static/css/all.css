@@ -114,7 +114,8 @@ body {
 }
 
 .block .full {
-    width: 90vw;
+    width: auto;
+    background-color: #000;
 }
 
 .block .camera {

@@ -114,7 +114,7 @@ body {
 }
 
 .block .full {
-    width: 90vw;
+    width: 89vw;
 }
 
 .block .camera {
@@ -191,7 +191,6 @@ body {
 /* Contenido de Notificaciones */
 .notifications-content {
     padding: 15px;
-    
 }
 
 /* Capa de fondo para cerrar el modal al hacer clic fuera */

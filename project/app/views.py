@@ -313,6 +313,148 @@ def api_accesos_data(request):
         print(f"Error no manejado: {e}\n{traceback_str}")
         return JsonResponse({"error": "Error interno del servidor", "details": str(e)}, status=500)
 
+def api_dia_mas_accesos(request):
+    try:
+        # Verificar autenticación
+        firebase_token = request.session.get("firebase_token")
+        if not firebase_token:
+            return JsonResponse({"error": "No autorizado", "details": "Token no encontrado"}, status=401)
+        
+        try:
+            decoded_token = auth.verify_id_token(firebase_token)
+            uid = decoded_token["uid"]
+        except Exception as e:
+            return JsonResponse({"error": "Error de autenticación", "details": str(e)}, status=401)
+        
+        # Obtener el device_id del usuario
+        user_doc = db.collection("Usuarios").document(uid).get()
+        if not user_doc.exists:
+            return JsonResponse({"error": "Usuario no encontrado"}, status=404)
+        
+        user_data = user_doc.to_dict()
+        device_id = user_data.get("device_id")
+        
+        if not device_id:
+            # Si no hay device_id, regresamos datos vacíos pero válidos
+            return JsonResponse({
+                "day": "Sin datos",
+                "date": "Sin datos",
+                "count": 0
+            })
+        
+        # Obtener documento de Sesame con el device_id
+        sesame_docs = db.collection("Sesame").where(filter=FieldFilter("idLock", "==", device_id)).get()
+        
+        if not sesame_docs:
+            return JsonResponse({
+                "day": "Sin datos",
+                "date": "Sin datos",
+                "count": 0
+            })
+        
+        # Obtener todos los accesos
+        sesame_data = sesame_docs[0].to_dict()
+        accesos = sesame_data.get("Accesos", [])
+        
+        if not accesos:
+            return JsonResponse({
+                "day": "Sin datos",
+                "date": "Sin datos",
+                "count": 0
+            })
+        
+        # Establecer zona horaria local
+        timezone = pytz.timezone('America/Mexico_City')  # UTC-6
+        
+        # Diccionario para contar accesos por día
+        day_counts = {}
+        
+        # Procesar cada acceso y contar por día
+        for acceso in accesos:
+            try:
+                # Si es un timestamp de Firestore
+                if hasattr(acceso.get("timestamp"), "timestamp"):
+                    acceso_date = acceso.get("timestamp").astimezone(timezone)
+                    date_key = acceso_date.strftime("%Y-%m-%d")
+                else:
+                    # Si es un string formateado como en el ejemplo
+                    timestamp_str = acceso.get("timestamp")
+                    if not timestamp_str:
+                        continue
+                    
+                    # Ejemplo: "19 de marzo de 2025, 1:46:58 p.m. UTC-6"
+                    try:
+                        timestamp_str = timestamp_str.replace("de ", "").replace(",", "").replace(".", "").replace("UTC-6", "")
+                        acceso_date = datetime.strptime(timestamp_str, "%d %B %Y %I:%M:%S %p")
+                        acceso_date = timezone.localize(acceso_date)
+                        date_key = acceso_date.strftime("%Y-%m-%d")
+                    except ValueError:
+                        try:
+                            # Para timestamps en formato estándar
+                            acceso_date = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+                            acceso_date = acceso_date.astimezone(timezone)
+                            date_key = acceso_date.strftime("%Y-%m-%d")
+                        except ValueError:
+                            print(f"No se pudo parsear el timestamp: {timestamp_str}")
+                            continue
+                
+                # Incrementar contador para esta fecha
+                if date_key in day_counts:
+                    day_counts[date_key]["count"] += 1
+                else:
+                    # Formato para mostrar
+                    month_names = {
+                        1: "enero", 2: "febrero", 3: "marzo", 4: "abril", 5: "mayo", 6: "junio",
+                        7: "julio", 8: "agosto", 9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
+                    }
+                    
+                    day_name = acceso_date.strftime("%A").capitalize()
+                    # Traducir día de la semana al español si está en inglés
+                    day_translations = {
+                        "Monday": "Lunes", "Tuesday": "Martes", "Wednesday": "Miércoles",
+                        "Thursday": "Jueves", "Friday": "Viernes", "Saturday": "Sábado", "Sunday": "Domingo"
+                    }
+                    day_name = day_translations.get(day_name, day_name)
+                    
+                    date_formatted = f"{acceso_date.day}/{acceso_date.month}/{acceso_date.year}"
+                    
+                    day_counts[date_key] = {
+                        "date": date_formatted,
+                        "day": day_name,
+                        "count": 1,
+                        "datetime": acceso_date  # Guardar para ordenar después
+                    }
+            
+            except Exception as e:
+                print(f"Error al procesar fecha de acceso: {e}")
+                continue
+        
+        # Si no hay datos válidos después del procesamiento
+        if not day_counts:
+            return JsonResponse({
+                "day": "Sin datos",
+                "date": "Sin datos",
+                "count": 0
+            })
+        
+        # Encontrar el día con más accesos
+        max_day = max(day_counts.values(), key=lambda x: x["count"])
+        
+        # Preparar respuesta
+        result = {
+            "day": max_day["day"],
+            "date": max_day["date"],
+            "count": max_day["count"]
+        }
+        
+        return JsonResponse(result)
+    
+    except Exception as e:
+        import traceback
+        traceback_str = traceback.format_exc()
+        print(f"Error no manejado: {e}\n{traceback_str}")
+        return JsonResponse({"error": "Error interno del servidor", "details": str(e)}, status=500)
+
 def add(request):
     name = request.POST["name"]
     lastName = request.POST["lastName"]

@@ -120,20 +120,42 @@
         </div>
     </div>
     <div class="block">
-        <div class="half">
+        <div class="full">
             <h1>Día con más entradas</h1>
-            <h2>Día</h2>
-            <h2>dd/mm/yyyy</h2>
-            <h2>X entradas</h2>
+            <h2 id="max-day">Cargando...</h2>
+            <h2 id="max-date">Cargando...</h2>
+            <h2 id="max-count">Cargando...</h2>
         </div>
     </div>
-    <div class="block">
-        <div class="half">
-            <h1>Día con más salidas</h1>
-            <h2>Día</h2>
-            <h2>dd/mm/yyyy</h2>
-            <h2>X entradas</h2>
-        </div>
-    </div>
+    
+    <script>
+        // Añadir este código después del script existente
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos del día con más accesos
+            fetch('/api/dia-mas-accesos/')
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errData => {
+                            throw new Error('Error del servidor: ' + (errData.error || response.statusText));
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Datos del día con más accesos:", data);
+                    
+                    // Actualizar el HTML con los datos recibidos
+                    document.getElementById('max-day').textContent = data.day;
+                    document.getElementById('max-date').textContent = data.date;
+                    document.getElementById('max-count').textContent = data.count + " entradas";
+                })
+                .catch(error => {
+                    console.error('Error al cargar los datos del día con más accesos:', error);
+                    document.getElementById('max-day').textContent = "Error al cargar datos";
+                    document.getElementById('max-date').textContent = "";
+                    document.getElementById('max-count').textContent = "";
+                });
+        });
+    </script>
 </div>
 {% endblock %}

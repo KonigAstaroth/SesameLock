@@ -32,4 +32,5 @@ urlpatterns = [
     path('signup/', views.signup, name="signup"),
 
     path('api/accesos-data/', views.api_accesos_data, name='api_accesos_data'),
+    path('api/dia-mas-accesos/', views.api_dia_mas_accesos, name='api_dia_mas_accesos'),
 ]
