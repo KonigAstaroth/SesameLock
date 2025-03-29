@@ -186,14 +186,15 @@ body {
 /* Mostrar cuando se hace clic */
 #notifications:target {
     max-height: 200px; /* Ajusta según el contenido */
+    overflow-y: scroll;
 }
 
 /* Contenido de Notificaciones */
 .notifications-content {
     padding: 15px;
+    overflow-y: scroll;
 }
 
-/* Capa de fondo para cerrar el modal al hacer clic fuera */
 .overlay {
     position: fixed;
     top: 0;
@@ -203,7 +204,6 @@ body {
     display: none;
 }
 
-/* Mostrar capa cuando se abre el modal */
 #notifications:target + .overlay {
     display: block;
 }

@@ -68,14 +68,30 @@ def inicio(request):
     error_message = request.GET.get('error', None)
     success_message = request.GET.get("success", None)
                 
+    todas_alertas = obtener_alertas(device)
+
     return render(request, 'inicio.html', {
          'error_message': error_message, 
          'success_message': success_message, 
          'name' : name, 
          "Invitados": Invitados, 
          "ultima_alerta": ultima_alerta,
-         "ultimo_acceso": ultimo_acceso
+         "ultimo_acceso": ultimo_acceso,
+         "todas_alertas": todas_alertas
          })
+
+def obtener_alertas(device_id):
+    alertas = []
+    if device_id:
+        sesame_ref = db.collection("Sesame")
+        sesame_query = sesame_ref.where(filter=FieldFilter("idLock", "==", device_id)).get()
+        if sesame_query:
+            sesame_doc = sesame_query[0]
+            sesame_data = sesame_doc.to_dict()
+            if sesame_data.get("Alertas"):
+                alertas = sesame_data["Alertas"]
+                alertas.reverse()
+    return alertas
 
 def regInv(request):
     firebase_token = request.session.get("firebase_token")
